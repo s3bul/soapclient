@@ -110,7 +110,7 @@ class SoapClient
 
     private function checkClient(): void
     {
-        if(!is_null($this->client)) {
+        if(is_null($this->client)) {
             throw new InvalidArgumentException('SoapClient: First call "init" method');
         }
     }
