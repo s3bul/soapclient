@@ -237,8 +237,17 @@ class SoapClient
     public function setOptions(array $options): self
     {
         $this->options = [];
+        return $this->addOptions($options);
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function addOptions(array $options): self
+    {
         foreach($options as $key => $value) {
-            $this->setOption($key, $value);
+            $this->addOption($key, $value);
         }
 
         return $this;
@@ -248,8 +257,19 @@ class SoapClient
      * @param string $option
      * @param mixed $value
      * @return $this
+     * @see SoapClient::addOption()
      */
     public function setOption(string $option, $value): self
+    {
+        return $this->addOption($option, $value);
+    }
+
+    /**
+     * @param string $option
+     * @param mixed $value
+     * @return $this
+     */
+    public function addOption(string $option, $value): self
     {
         if(in_array($option, self::RESTRICT_OPTIONS)) {
             throw new InvalidArgumentException("SoapClient: Option \"$option\" is restricted");
