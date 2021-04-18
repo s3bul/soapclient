@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace S3bul\SoapClient;
 
 use InvalidArgumentException;
+use SimpleXMLElement;
 use SoapClient as PhpSoapClient;
 
 /**
@@ -29,6 +30,8 @@ class SoapClient
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
     const DEFAULT_TRACE = true;
+    const DEFAULT_SIMPLE_RESPONSE = true;
+    const DEFAULT_SIMPLE_XML_ELEMENT = true;
 
     /**
      * @var PhpSoapClient|null
@@ -66,6 +69,16 @@ class SoapClient
     private $streamContext = null;
 
     /**
+     * @var bool
+     */
+    private bool $simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
+
+    /**
+     * @var bool
+     */
+    private bool $simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
+
+    /**
      * @param string|null $wsdl
      * @param array $options
      * @return $this
@@ -89,8 +102,38 @@ class SoapClient
         $this->soapVersion = self::DEFAULT_SOAP_VERSION;
         $this->trace = self::DEFAULT_TRACE;
         $this->streamContext = null;
+        $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
+        $this->simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
 
         return $this;
+    }
+
+    private function checkClient(): void
+    {
+        if(!is_null($this->client)) {
+            throw new InvalidArgumentException('SoapClient: First call "init" method');
+        }
+    }
+
+    /**
+     * @param string|SimpleXMLElement $response
+     * @return string
+     */
+    private function getSimpleResponse(string $response)
+    {
+        $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
+        return $this->simpleXmlElement ? new SimpleXMLElement($result) : $result;
+    }
+
+    /**
+     * @return string|SimpleXMLElement|null
+     */
+    public function getLastResponse()
+    {
+        $this->checkClient();
+        $response = $this->client->__getLastResponse();
+        return $this->simpleResponse && !is_null($response) ?
+            $this->getSimpleResponse($response) : $response;
     }
 
     /**
@@ -100,9 +143,7 @@ class SoapClient
      */
     public function __call(string $name, array $arguments)
     {
-        if(!is_null($this->client)) {
-            throw new InvalidArgumentException('SoapClient: First call "init" method');
-        }
+        $this->checkClient();
 
         if(!method_exists($this->client, $name)) {
             throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
@@ -210,6 +251,42 @@ class SoapClient
     }
 
     /**
+     * @return bool
+     */
+    public function isSimpleResponse(): bool
+    {
+        return $this->simpleResponse;
+    }
+
+    /**
+     * @param bool $simpleResponse
+     * @return $this
+     */
+    public function setSimpleResponse(bool $simpleResponse): self
+    {
+        $this->simpleResponse = $simpleResponse;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSimpleXmlElement(): bool
+    {
+        return $this->simpleXmlElement;
+    }
+
+    /**
+     * @param bool $simpleXmlElement
+     * @return $this
+     */
+    public function setSimpleXmlElement(bool $simpleXmlElement): self
+    {
+        $this->simpleXmlElement = $simpleXmlElement;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getOptions(): array
@@ -247,7 +324,7 @@ class SoapClient
     public function addOptions(array $options): self
     {
         foreach($options as $key => $value) {
-            $this->addOption($key, $value);
+            $this->setOption($key, $value);
         }
 
         return $this;
@@ -257,19 +334,8 @@ class SoapClient
      * @param string $option
      * @param mixed $value
      * @return $this
-     * @see SoapClient::addOption()
      */
     public function setOption(string $option, $value): self
-    {
-        return $this->addOption($option, $value);
-    }
-
-    /**
-     * @param string $option
-     * @param mixed $value
-     * @return $this
-     */
-    public function addOption(string $option, $value): self
     {
         if(in_array($option, self::RESTRICT_OPTIONS)) {
             throw new InvalidArgumentException("SoapClient: Option \"$option\" is restricted");
@@ -278,6 +344,5 @@ class SoapClient
 
         return $this;
     }
-
 
 }
