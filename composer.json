@@ -9,8 +9,9 @@
     "homepage": "https://github.com/s3bul/soapclient",
     "type": "library",
     "require": {
-        "php": "^7.4",
-        "ext-soap": "*"
+        "php": "^7.4 | ^8.0",
+        "ext-soap": "*",
+        "ext-simplexml": "*"
     },
     "license": "MIT",
     "authors": [
