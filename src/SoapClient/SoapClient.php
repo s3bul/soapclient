@@ -246,7 +246,7 @@ class SoapClient
      */
     public function setStreamContext($streamContext): self
     {
-        $this->streamContext = !is_array($streamContext) ? stream_context_create($streamContext) : $streamContext;
+        $this->streamContext = is_array($streamContext) ? stream_context_create($streamContext) : $streamContext;
         return $this;
     }
 
