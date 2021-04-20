@@ -163,7 +163,7 @@ class SoapClient
      * @param mixed $response
      * @return mixed
      */
-    private function filterCallResponse($response)
+    private function normalizeCallResponse($response)
     {
         $result = null;
         if(is_array($response)) {
@@ -196,7 +196,7 @@ class SoapClient
         $method = $callName ? substr($name, 4) : $name;
 
         $result = call_user_func_array([$this->client, $method], $arguments);
-        return $callName ? $this->filterCallResponse($result) : $result;
+        return $callName ? $this->normalizeCallResponse($result) : $result;
     }
 
     /**
