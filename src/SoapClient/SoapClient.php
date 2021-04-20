@@ -139,6 +139,16 @@ class SoapClient
     }
 
     /**
+     * @throws InvalidArgumentException
+     */
+    private function checkTrace(): void
+    {
+        if($this->trace !== true) {
+            throw new InvalidArgumentException('SoapClient: First set "trace" to true');
+        }
+    }
+
+    /**
      * @param string $response
      * @return string|SimpleXMLElement
      */
@@ -154,9 +164,7 @@ class SoapClient
     public function getLastResponse()
     {
         $this->checkClient();
-        if($this->trace !== true) {
-            throw new InvalidArgumentException('SoapClient: First set "trace" to true');
-        }
+        $this->checkTrace();
         $response = $this->client->__getLastResponse();
         return $this->simpleResponse && !is_null($response) ?
             $this->getSimpleResponse($response) : $response;
@@ -194,6 +202,10 @@ class SoapClient
             !method_exists($this->client, $name)
         ) {
             throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
+        }
+
+        if(substr($name, 0, 9) === '__getLast') {
+            $this->checkTrace();
         }
 
         $method = $callName ? substr($name, 4) : $name;
