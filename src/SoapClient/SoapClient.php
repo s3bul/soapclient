@@ -7,12 +7,26 @@ namespace S3bul\SoapClient;
 use InvalidArgumentException;
 use SimpleXMLElement;
 use SoapClient as PhpSoapClient;
+use SoapHeader;
 
 /**
  * Class SoapClient
  *
  * @author Sebastian Korzeniecki <seba5zer@gmail.com>
  * @package S3bul\SoapClient
+ *
+ * @method string|null __doRequest(string $request, string $location, string $action, int $version, bool $oneWay = false)
+ * @method array __getCookies()
+ * @method array|null __getFunctions()
+ * @method string|null __getLastRequest()
+ * @method string|null __getLastRequestHeaders()
+ * @method string|null __getLastResponse()
+ * @method string|null __getLastResponseHeaders()
+ * @method array|null __getTypes()
+ * @method void __setCookie(string $name, string|null $value = null)
+ * @method string|null __setLocation(string $location = '')
+ * @method bool __setSoapHeaders(SoapHeader|array|null $headers = null)
+ * @method mixed __soapCall(string $name, array $args, array|null $options = null, SoapHeader|array|null $inputHeaders = null, array &$outputHeaders = null)
  */
 class SoapClient
 {
