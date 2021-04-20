@@ -93,6 +93,11 @@ class SoapClient
     private bool $simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
 
     /**
+     * @var string|null
+     */
+    private ?string $responseName = null;
+
+    /**
      * @param string|null $wsdl
      * @param array $options
      * @return $this
@@ -118,6 +123,7 @@ class SoapClient
         $this->streamContext = null;
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
+        $this->responseName = null;
 
         return $this;
     }
@@ -154,6 +160,22 @@ class SoapClient
     }
 
     /**
+     * @param $response
+     * @return string|SimpleXMLElement
+     */
+    private function filterResponse($response)
+    {
+        $result = null;
+        if(is_array($response)) {
+            $result = $this->responseName !== null ? ($response[$this->responseName] ?? $response) : $response;
+        }
+        if(is_object($response)) {
+            $result = $this->responseName !== null ? ($response->{$this->responseName} ?? $response) : $response;
+        }
+        return $this->getSimpleResponse($result);
+    }
+
+    /**
      * @param string $name
      * @param array $arguments
      * @return mixed
@@ -173,7 +195,8 @@ class SoapClient
 
         $method = $callName ? substr($name, 4) : $name;
 
-        return call_user_func_array([$this->client, $method], $arguments);
+        $result = call_user_func_array([$this->client, $method], $arguments);
+        return $callName ? $this->filterResponse($result) : $result;
     }
 
     /**
@@ -366,6 +389,24 @@ class SoapClient
         }
         $this->options[$option] = $value;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResponseName(): ?string
+    {
+        return $this->responseName;
+    }
+
+    /**
+     * @param string|null $responseName
+     * @return $this
+     */
+    public function setResponseName(?string $responseName): self
+    {
+        $this->responseName = $responseName;
         return $this;
     }
 
