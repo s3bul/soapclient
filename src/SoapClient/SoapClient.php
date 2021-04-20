@@ -122,6 +122,9 @@ class SoapClient
         return $this;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function checkClient(): void
     {
         if(is_null($this->client)) {
@@ -159,11 +162,18 @@ class SoapClient
     {
         $this->checkClient();
 
-        if(!method_exists($this->client, $name)) {
+        $callName = substr($name, 0, 4) === 'call';
+
+        if(
+            (substr($name, 0, 2) === '__' || !$callName) &&
+            !method_exists($this->client, $name)
+        ) {
             throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
         }
 
-        return call_user_func_array([$this->client, $name], $arguments);
+        $method = $callName ? substr($name, 4) : $name;
+
+        return call_user_func_array([$this->client, $method], $arguments);
     }
 
     /**
