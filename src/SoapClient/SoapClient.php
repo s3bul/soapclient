@@ -139,13 +139,13 @@ class SoapClient
     }
 
     /**
-     * @param string|object $response
+     * @param string $response
      * @return string|SimpleXMLElement
      */
-    private function getSimpleResponse($response)
+    private function getSimpleResponse(string $response)
     {
-        $result = is_string($response) ? preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response) : $response;
-        return is_string($result) ? ($this->simpleXmlElement ? new SimpleXMLElement($result) : $result) : $result;
+        $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
+        return $this->simpleXmlElement ? new SimpleXMLElement($result) : $result;
     }
 
     /**
@@ -160,10 +160,10 @@ class SoapClient
     }
 
     /**
-     * @param $response
-     * @return string|SimpleXMLElement
+     * @param mixed $response
+     * @return mixed
      */
-    private function filterResponse($response)
+    private function filterCallResponse($response)
     {
         $result = null;
         if(is_array($response)) {
@@ -172,7 +172,7 @@ class SoapClient
         if(is_object($response)) {
             $result = $this->responseName !== null ? ($response->{$this->responseName} ?? $response) : $response;
         }
-        return $this->getSimpleResponse($result);
+        return $this->simpleResponse && is_string($result) ? $this->getSimpleResponse($result) : $result;
     }
 
     /**
@@ -196,7 +196,7 @@ class SoapClient
         $method = $callName ? substr($name, 4) : $name;
 
         $result = call_user_func_array([$this->client, $method], $arguments);
-        return $callName ? $this->filterResponse($result) : $result;
+        return $callName ? $this->filterCallResponse($result) : $result;
     }
 
     /**
