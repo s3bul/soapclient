@@ -1,7 +1,7 @@
 {
     "name": "s3bul/soapclient",
     "description": "Extension for PHP SoapClient class",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "keywords": [
         "soapclient",
         "php"

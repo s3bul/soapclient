@@ -139,13 +139,13 @@ class SoapClient
     }
 
     /**
-     * @param string|SimpleXMLElement $response
-     * @return string
+     * @param string|object $response
+     * @return string|SimpleXMLElement
      */
-    private function getSimpleResponse(string $response)
+    private function getSimpleResponse($response)
     {
-        $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
-        return $this->simpleXmlElement ? new SimpleXMLElement($result) : $result;
+        $result = is_string($response) ? preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response) : $response;
+        return is_string($result) ? ($this->simpleXmlElement ? new SimpleXMLElement($result) : $result) : $result;
     }
 
     /**
