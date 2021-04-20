@@ -209,9 +209,10 @@ class SoapClient
         }
 
         $method = $callName ? substr($name, 4) : $name;
+        $soapCall = $name === '__soapCall';
 
         $result = call_user_func_array([$this->client, $method], $arguments);
-        return $callName ? $this->normalizeCallResponse($result) : $result;
+        return $callName || $soapCall ? $this->normalizeCallResponse($result) : $result;
     }
 
     /**
