@@ -43,7 +43,7 @@ class SoapClient
     ];
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
-    const DEFAULT_TRACE = true;
+    const DEFAULT_TRACE = false;
     const DEFAULT_SIMPLE_RESPONSE = true;
     const DEFAULT_SIMPLE_XML_ELEMENT = true;
 
@@ -154,6 +154,9 @@ class SoapClient
     public function getLastResponse()
     {
         $this->checkClient();
+        if($this->trace !== true) {
+            throw new InvalidArgumentException('SoapClient: First set "trace" to true');
+        }
         $response = $this->client->__getLastResponse();
         return $this->simpleResponse && !is_null($response) ?
             $this->getSimpleResponse($response) : $response;
