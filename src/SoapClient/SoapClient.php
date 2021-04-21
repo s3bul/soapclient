@@ -195,10 +195,10 @@ class SoapClient
     {
         $this->checkClient();
 
-        $callName = substr($name, 0, 4) === 'call';
+        $isCallMethod = substr($name, 0, 4) === 'call';
 
         if(
-            (substr($name, 0, 2) === '__' || !$callName) &&
+            (substr($name, 0, 2) === '__' || !$isCallMethod) &&
             !method_exists($this->client, $name)
         ) {
             throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
@@ -208,11 +208,11 @@ class SoapClient
             $this->checkTrace();
         }
 
-        $method = $callName ? substr($name, 4) : $name;
-        $soapCall = $name === '__soapCall';
+        $method = $isCallMethod ? substr($name, 4) : $name;
+        $isSoapCall = $name === '__soapCall';
 
         $result = call_user_func_array([$this->client, $method], $arguments);
-        return $callName || $soapCall ? $this->normalizeCallResponse($result) : $result;
+        return $isCallMethod || $isSoapCall ? $this->normalizeCallResponse($result) : $result;
     }
 
     /**
