@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace S3bul\SoapClient;
 
 use InvalidArgumentException;
-use SimpleXMLElement;
 use SoapClient as PhpSoapClient;
 use SoapHeader;
 
@@ -45,7 +44,7 @@ class SoapClient
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
     const DEFAULT_TRACE = false;
     const DEFAULT_SIMPLE_RESPONSE = true;
-    const DEFAULT_SIMPLE_XML_ELEMENT = true;
+    const DEFAULT_SOAP_XML_ELEMENT = true;
 
     /**
      * @var PhpSoapClient|null
@@ -90,7 +89,7 @@ class SoapClient
     /**
      * @var bool
      */
-    private bool $simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
+    private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
 
     /**
      * @var string|null
@@ -122,7 +121,7 @@ class SoapClient
         $this->trace = self::DEFAULT_TRACE;
         $this->streamContext = null;
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
-        $this->simpleXmlElement = self::DEFAULT_SIMPLE_XML_ELEMENT;
+        $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->responseName = null;
 
         return $this;
@@ -150,16 +149,16 @@ class SoapClient
 
     /**
      * @param string $response
-     * @return string|SimpleXMLElement
+     * @return string|SoapXmlElement
      */
     private function getSimpleResponse(string $response)
     {
         $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
-        return $this->simpleXmlElement ? new SimpleXMLElement($result) : $result;
+        return $this->soapXmlElement ? new SoapXmlElement($result) : $result;
     }
 
     /**
-     * @return string|SimpleXMLElement|null
+     * @return string|SoapXmlElement|null
      */
     public function getLastResponse()
     {
@@ -333,19 +332,41 @@ class SoapClient
 
     /**
      * @return bool
+     * @deprecated
+     * @see SoapClient::isSoapXmlElement()
      */
     public function isSimpleXmlElement(): bool
     {
-        return $this->simpleXmlElement;
+        return $this->soapXmlElement;
     }
 
     /**
      * @param bool $simpleXmlElement
      * @return $this
+     * @deprecated
+     * @see SoapClient::setSoapXmlElement()
      */
     public function setSimpleXmlElement(bool $simpleXmlElement): self
     {
-        $this->simpleXmlElement = $simpleXmlElement;
+        $this->soapXmlElement = $simpleXmlElement;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSoapXmlElement(): bool
+    {
+        return $this->soapXmlElement;
+    }
+
+    /**
+     * @param bool $soapXmlElement
+     * @return $this
+     */
+    public function setSoapXmlElement(bool $soapXmlElement): self
+    {
+        $this->soapXmlElement = $soapXmlElement;
         return $this;
     }
 
