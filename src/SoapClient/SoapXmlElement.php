@@ -15,12 +15,28 @@ use SimpleXMLElement;
 class SoapXmlElement extends SimpleXMLElement
 {
     /**
-     * @param string|null $name
-     * @return string
+     * @param SoapXmlElement $element
+     * @return SoapXmlElement[]
      */
-    public function getValue(string $name = null): string
+    private function valueToArray(SoapXmlElement $element): array
     {
-        return strval(is_null($name) ? $this : $this->$name);
+        $count = $element->count();
+        $result = [];
+        for($i = 0; $i < $count; ++$i) {
+            $result[] = $element[$i];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string|null $name
+     * @return string|SoapXmlElement[]
+     */
+    public function getValue(string $name = null)
+    {
+        $result = is_null($name) ? $this : $this->$name;
+        return $result->count() > 1 ? $this->valueToArray($result) : strval($result);
     }
 
 }
