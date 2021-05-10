@@ -45,6 +45,7 @@ class SoapClient
     const DEFAULT_TRACE = false;
     const DEFAULT_SIMPLE_RESPONSE = true;
     const DEFAULT_SOAP_XML_ELEMENT = true;
+    const DEFAULT_SOAP_XML_OPTIONS = 0;
 
     /**
      * @var PhpSoapClient|null
@@ -97,6 +98,11 @@ class SoapClient
     private ?string $responseName = null;
 
     /**
+     * @var int
+     */
+    private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+
+    /**
      * @param string|null $wsdl
      * @param array $options
      * @return $this
@@ -123,6 +129,7 @@ class SoapClient
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->responseName = null;
+        $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
 
         return $this;
     }
@@ -168,13 +175,22 @@ class SoapClient
     }
 
     /**
+     * @param string $content
+     * @return SoapXmlElement
+     */
+    private function createSoapXmlElement(string $content): SoapXmlElement
+    {
+        return new SoapXmlElement($content, $this->soapXmlOptions);
+    }
+
+    /**
      * @param string $response
      * @return string|SoapXmlElement
      */
     private function getSimpleResponse(string $response)
     {
         $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
-        return $this->soapXmlElement ? new SoapXmlElement($result) : $result;
+        return $this->soapXmlElement ? $this->createSoapXmlElement($result) : $result;
     }
 
     /**
@@ -470,6 +486,44 @@ class SoapClient
     public function setResponseName(?string $responseName): self
     {
         $this->responseName = $responseName;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSoapXmlOptions(): int
+    {
+        return $this->soapXmlOptions;
+    }
+
+    /**
+     * @param int $soapXmlOptions
+     * @return $this
+     */
+    public function setSoapXmlOptions(int $soapXmlOptions): self
+    {
+        $this->soapXmlOptions = $soapXmlOptions;
+        return $this;
+    }
+
+    /**
+     * @param int $soapXmlOption
+     * @return $this
+     */
+    public function addSoapXmlOption(int $soapXmlOption): self
+    {
+        $this->soapXmlOptions |= $soapXmlOption;
+        return $this;
+    }
+
+    /**
+     * @param int $soapXmlOption
+     * @return $this
+     */
+    public function removeSoapXmlOption(int $soapXmlOption): self
+    {
+        $this->soapXmlOptions ^= $soapXmlOption;
         return $this;
     }
 
