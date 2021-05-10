@@ -148,6 +148,26 @@ class SoapClient
     }
 
     /**
+     * @return array
+     */
+    public function getSoapServices(): array
+    {
+        $this->checkClient();
+
+        $result = [];
+        $services = array_unique($this->client->__getFunctions());
+        foreach($services as $service) {
+            $matches = [];
+            $match = preg_match('/(\w+)[ ]+(\w+)/', $service, $matches);
+            if($match === 1) {
+                $result[$matches[2]] = $matches[1];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param string $response
      * @return string|SoapXmlElement
      */
@@ -176,11 +196,17 @@ class SoapClient
     private function normalizeCallResponse($response)
     {
         $result = $response;
+        $ucResponseName = ucfirst($this->responseName ?? '');
+        $lcResponseName = lcfirst($this->responseName ?? '');
         if(is_array($response)) {
-            $result = $this->responseName !== null ? ($response[$this->responseName] ?? $response) : $response;
+            $result = $this->responseName !== null ?
+                ($response[$this->responseName] ?? $response[$ucResponseName] ?? $response[$lcResponseName] ?? $response) :
+                $response;
         }
         else if(is_object($response)) {
-            $result = $this->responseName !== null ? ($response->{$this->responseName} ?? $response) : $response;
+            $result = $this->responseName !== null ?
+                ($response->{$this->responseName} ?? $response->{$ucResponseName} ?? $response->{$lcResponseName} ?? $response) :
+                $response;
         }
         return $this->simpleResponse && is_string($result) ? $this->getSimpleResponse($result) : $result;
     }
