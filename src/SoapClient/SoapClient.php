@@ -148,6 +148,26 @@ class SoapClient
     }
 
     /**
+     * @return array
+     */
+    public function getSoapServices(): array
+    {
+        $this->checkClient();
+
+        $result = [];
+        $services = array_unique($this->client->__getFunctions());
+        foreach($services as $service) {
+            $matches = [];
+            $match = preg_match('/(\w+)[ ]+(\w+)/', $service, $matches);
+            if($match === 1) {
+                $result[$matches[2]] = $matches[1];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param string $response
      * @return string|SoapXmlElement
      */
