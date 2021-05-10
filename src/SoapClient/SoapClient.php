@@ -196,11 +196,17 @@ class SoapClient
     private function normalizeCallResponse($response)
     {
         $result = $response;
+        $ucResponseName = ucfirst($this->responseName ?? '');
+        $lcResponseName = lcfirst($this->responseName ?? '');
         if(is_array($response)) {
-            $result = $this->responseName !== null ? ($response[$this->responseName] ?? $response) : $response;
+            $result = $this->responseName !== null ?
+                ($response[$this->responseName] ?? $response[$ucResponseName] ?? $response[$lcResponseName] ?? $response) :
+                $response;
         }
         else if(is_object($response)) {
-            $result = $this->responseName !== null ? ($response->{$this->responseName} ?? $response) : $response;
+            $result = $this->responseName !== null ?
+                ($response->{$this->responseName} ?? $response->{$ucResponseName} ?? $response->{$lcResponseName} ?? $response) :
+                $response;
         }
         return $this->simpleResponse && is_string($result) ? $this->getSimpleResponse($result) : $result;
     }
