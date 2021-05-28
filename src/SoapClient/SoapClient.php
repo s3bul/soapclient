@@ -32,12 +32,17 @@ class SoapClient
     const OPTION_LOCATION = 'location';
     const OPTION_SOAP_VERSION = 'soap_version';
     const OPTION_TRACE = 'trace';
+    const OPTION_CLASSMAP = 'classmap';
+    const OPTION_CONNECTION_TIMEOUT = 'connection_timeout';
+    const OPTION_CACHE_WSDL = 'cache_wsdl';
+    const OPTION_USER_AGENT = 'user_agent';
     const OPTION_STREAM_CONTEXT = 'stream_context';
 
     private const RESTRICT_OPTIONS = [
         self::OPTION_LOCATION,
         self::OPTION_SOAP_VERSION,
         self::OPTION_TRACE,
+        self::OPTION_CLASSMAP,
         self::OPTION_STREAM_CONTEXT,
     ];
 
@@ -83,6 +88,11 @@ class SoapClient
     private $streamContext = null;
 
     /**
+     * @var array
+     */
+    private array $classmap = [];
+
+    /**
      * @var bool
      */
     private bool $simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
@@ -126,6 +136,7 @@ class SoapClient
         $this->soapVersion = self::DEFAULT_SOAP_VERSION;
         $this->trace = self::DEFAULT_TRACE;
         $this->streamContext = null;
+        $this->classmap = [];
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->responseName = null;
@@ -355,6 +366,48 @@ class SoapClient
     }
 
     /**
+     * @return array
+     */
+    public function getClassmap(): array
+    {
+        return $this->classmap;
+    }
+
+    /**
+     * @param array $classmap
+     * @return $this
+     */
+    public function setClassmap(array $classmap): self
+    {
+        $this->classmap = [];
+        return $this->addClassmap($classmap);
+    }
+
+    /**
+     * @param array $classmap
+     * @return $this
+     */
+    public function addClassmap(array $classmap): self
+    {
+        foreach($classmap as $key => $name) {
+            $this->addOneClassmap($key, $name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param string $name
+     * @return $this
+     */
+    public function addOneClassmap(string $key, string $name): self
+    {
+        $this->classmap[$key] = $name;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isSimpleResponse(): bool
@@ -429,6 +482,9 @@ class SoapClient
         }
         if(!is_null($this->streamContext)) {
             $custom[self::OPTION_STREAM_CONTEXT] = $this->streamContext;
+        }
+        if(count($this->classmap) > 0) {
+            $custom[self::OPTION_CLASSMAP] = $this->classmap;
         }
         return array_merge($this->options, $custom);
     }
