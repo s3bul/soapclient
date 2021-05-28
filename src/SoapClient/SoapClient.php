@@ -33,6 +33,7 @@ class SoapClient
     const OPTION_SOAP_VERSION = 'soap_version';
     const OPTION_TRACE = 'trace';
     const OPTION_STREAM_CONTEXT = 'stream_context';
+    const OPTION_CONNECTION_TIMEOUT = 'connection_timeout';
 
     private const RESTRICT_OPTIONS = [
         self::OPTION_LOCATION,
