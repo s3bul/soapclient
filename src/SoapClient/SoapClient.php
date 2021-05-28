@@ -32,16 +32,18 @@ class SoapClient
     const OPTION_LOCATION = 'location';
     const OPTION_SOAP_VERSION = 'soap_version';
     const OPTION_TRACE = 'trace';
-    const OPTION_STREAM_CONTEXT = 'stream_context';
     const OPTION_CLASSMAP = 'classmap';
     const OPTION_CONNECTION_TIMEOUT = 'connection_timeout';
+    const OPTION_CACHE_WSDL = 'cache_wsdl';
+    const OPTION_USER_AGENT = 'user_agent';
+    const OPTION_STREAM_CONTEXT = 'stream_context';
 
     private const RESTRICT_OPTIONS = [
         self::OPTION_LOCATION,
         self::OPTION_SOAP_VERSION,
         self::OPTION_TRACE,
-        self::OPTION_STREAM_CONTEXT,
         self::OPTION_CLASSMAP,
+        self::OPTION_STREAM_CONTEXT,
     ];
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
