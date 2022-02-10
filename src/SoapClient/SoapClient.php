@@ -186,12 +186,27 @@ class SoapClient
     }
 
     /**
+     * @param SoapXmlElement $element
+     * @return SoapXmlElement
+     */
+    private function normalizeSoapXmlElement(SoapXmlElement $element): SoapXmlElement
+    {
+        $ucResponseName = ucfirst($this->responseName ?? '');
+        $lcResponseName = lcfirst($this->responseName ?? '');
+
+        return $this->responseName !== null ?
+            ($element->{$this->responseName} ?? $element->{$ucResponseName} ?? $element->{$lcResponseName} ?? $element) :
+            $element;
+    }
+
+    /**
      * @param string $content
      * @return SoapXmlElement
      */
     private function createSoapXmlElement(string $content): SoapXmlElement
     {
-        return new SoapXmlElement($content, $this->soapXmlOptions);
+        $result = new SoapXmlElement($content, $this->soapXmlOptions);
+        return $this->normalizeSoapXmlElement($result);
     }
 
     /**
@@ -217,28 +232,6 @@ class SoapClient
     }
 
     /**
-     * @param mixed $response
-     * @return mixed
-     */
-    private function normalizeCallResponse($response)
-    {
-        $result = $response;
-        $ucResponseName = ucfirst($this->responseName ?? '');
-        $lcResponseName = lcfirst($this->responseName ?? '');
-        if(is_array($response)) {
-            $result = $this->responseName !== null ?
-                ($response[$this->responseName] ?? $response[$ucResponseName] ?? $response[$lcResponseName] ?? $response) :
-                $response;
-        }
-        else if(is_object($response)) {
-            $result = $this->responseName !== null ?
-                ($response->{$this->responseName} ?? $response->{$ucResponseName} ?? $response->{$lcResponseName} ?? $response) :
-                $response;
-        }
-        return $this->simpleResponse && is_string($result) ? $this->getSimpleResponse($result) : $result;
-    }
-
-    /**
      * @param string $name
      * @param array $arguments
      * @return mixed
@@ -261,10 +254,8 @@ class SoapClient
         }
 
         $method = $isCallMethod ? substr($name, 4) : $name;
-        $isSoapCall = $name === '__soapCall';
 
-        $result = call_user_func_array([$this->client, $method], $arguments);
-        return $isCallMethod || $isSoapCall ? $this->normalizeCallResponse($result) : $result;
+        return call_user_func_array([$this->client, $method], $arguments);
     }
 
     /**
@@ -427,8 +418,7 @@ class SoapClient
 
     /**
      * @return bool
-     * @deprecated
-     * @see SoapClient::isSoapXmlElement()
+     * @deprecated Use {@see SoapClient::isSoapXmlElement()}
      */
     public function isSimpleXmlElement(): bool
     {
@@ -438,8 +428,7 @@ class SoapClient
     /**
      * @param bool $simpleXmlElement
      * @return $this
-     * @deprecated
-     * @see SoapClient::setSoapXmlElement()
+     * @deprecated Use {@see SoapClient::setSoapXmlElement()}
      */
     public function setSimpleXmlElement(bool $simpleXmlElement): self
     {
