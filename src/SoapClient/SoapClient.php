@@ -113,6 +113,11 @@ class SoapClient
     private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
 
     /**
+     * @var mixed
+     */
+    private $lastCallResponse = null;
+
+    /**
      * @param string|null $wsdl
      * @param array $options
      * @return $this
@@ -163,6 +168,16 @@ class SoapClient
         if($this->trace !== true) {
             throw new InvalidArgumentException('SoapClient: First set "trace" to true');
         }
+    }
+
+    /**
+     * @return SoapResponse
+     */
+    public function getLastSoapResponse(): SoapResponse
+    {
+        return (new SoapResponse())
+            ->setData($this->getLastCallResponse())
+            ->setXml($this->getLastResponse());
     }
 
     /**
@@ -255,7 +270,13 @@ class SoapClient
 
         $method = $isCallMethod ? substr($name, 4) : $name;
 
-        return call_user_func_array([$this->client, $method], $arguments);
+        $result = call_user_func_array([$this->client, $method], $arguments);
+
+        if($this->trace === true) {
+            $this->lastCallResponse = $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -322,8 +343,17 @@ class SoapClient
 
     /**
      * @return bool|null
+     * @deprecated Use {@see SoapClient::isTrace()}
      */
     public function getTrace(): ?bool
+    {
+        return $this->trace;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isTrace(): ?bool
     {
         return $this->trace;
     }
@@ -570,6 +600,16 @@ class SoapClient
     {
         $this->soapXmlOptions ^= $soapXmlOption;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastCallResponse()
+    {
+        $this->checkTrace();
+
+        return $this->lastCallResponse;
     }
 
 }
