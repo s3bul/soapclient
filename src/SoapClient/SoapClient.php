@@ -93,7 +93,13 @@ class SoapClient
     private array $classmap = [];
 
     /**
+     * @var mixed
+     */
+    private $lastCallResponse = null;
+
+    /**
      * @var bool
+     * @deprecated
      */
     private bool $simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
 
@@ -111,11 +117,6 @@ class SoapClient
      * @var int
      */
     private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
-
-    /**
-     * @var mixed
-     */
-    private $lastCallResponse = null;
 
     /**
      * @param string|null $wsdl
@@ -142,6 +143,7 @@ class SoapClient
         $this->trace = self::DEFAULT_TRACE;
         $this->streamContext = null;
         $this->classmap = [];
+        $this->lastCallResponse = null;
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->responseName = null;
@@ -168,16 +170,6 @@ class SoapClient
         if($this->trace !== true) {
             throw new InvalidArgumentException('SoapClient: First set "trace" to true');
         }
-    }
-
-    /**
-     * @return SoapResponse
-     */
-    public function getLastSoapResponse(): SoapResponse
-    {
-        return (new SoapResponse())
-            ->setData($this->getLastCallResponse())
-            ->setXml($this->getLastResponse());
     }
 
     /**
@@ -225,16 +217,6 @@ class SoapClient
     }
 
     /**
-     * @param string $response
-     * @return string|SoapXmlElement
-     */
-    private function getSimpleResponse(string $response)
-    {
-        $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$3', $response);
-        return $this->soapXmlElement ? $this->createSoapXmlElement($result) : $result;
-    }
-
-    /**
      * @return string|SoapXmlElement|null
      */
     public function getLastResponse()
@@ -242,8 +224,30 @@ class SoapClient
         $this->checkClient();
         $this->checkTrace();
         $response = $this->client->__getLastResponse();
-        return $this->simpleResponse && !is_null($response) ?
-            $this->getSimpleResponse($response) : $response;
+        return $this->soapXmlElement && is_string($response) ?
+            $this->createSoapXmlElement($response) : $response;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastCallResponse()
+    {
+        $this->checkTrace();
+
+        return $this->lastCallResponse;
+    }
+
+    /**
+     * @return SoapResponse
+     */
+    public function getLastSoapResponse(): SoapResponse
+    {
+        $this->checkTrace();
+
+        return (new SoapResponse())
+            ->setData($this->getLastCallResponse())
+            ->setXml($this->getLastResponse());
     }
 
     /**
@@ -430,6 +434,7 @@ class SoapClient
 
     /**
      * @return bool
+     * @deprecated
      */
     public function isSimpleResponse(): bool
     {
@@ -439,6 +444,7 @@ class SoapClient
     /**
      * @param bool $simpleResponse
      * @return $this
+     * @deprecated
      */
     public function setSimpleResponse(bool $simpleResponse): self
     {
@@ -600,16 +606,6 @@ class SoapClient
     {
         $this->soapXmlOptions ^= $soapXmlOption;
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastCallResponse()
-    {
-        $this->checkTrace();
-
-        return $this->lastCallResponse;
     }
 
 }
