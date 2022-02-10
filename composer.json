@@ -6,20 +6,21 @@
         "soapclient",
         "php"
     ],
+    "minimum-stability": "stable",
     "homepage": "https://github.com/s3bul/soapclient",
-    "type": "library",
-    "require": {
-        "php": "^7.4 | ^8.0",
-        "ext-soap": "*",
-        "ext-simplexml": "*"
-    },
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "Sebastian Korzeniecki",
             "email": "seba5zer@gmail.com"
         }
     ],
+    "require": {
+        "php": "^7.4 | ^8.0",
+        "ext-soap": "*",
+        "ext-simplexml": "*"
+    },
     "config": {
         "sort-packages": true
     },
@@ -27,5 +28,10 @@
         "psr-4": {
             "S3bul\\": "src/"
         }
+    },
+    "scripts": {
+        "safe-update": [
+            "composer update --ignore-platform-reqs"
+        ]
     }
 }
