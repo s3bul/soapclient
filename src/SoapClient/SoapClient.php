@@ -542,7 +542,7 @@ class SoapClient
 
     /**
      * @return string|null
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::getResponseName()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getResponseName}
      */
     public function getResponseName(): ?string
     {
@@ -552,7 +552,7 @@ class SoapClient
     /**
      * @param string|null $responseName
      * @return $this
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::setResponseName()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setResponseName}
      */
     public function setResponseName(?string $responseName): self
     {
@@ -562,7 +562,7 @@ class SoapClient
 
     /**
      * @return int
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::getSoapXmlOptions()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getSoapXmlOptions}
      */
     public function getSoapXmlOptions(): int
     {
@@ -572,7 +572,7 @@ class SoapClient
     /**
      * @param int $soapXmlOptions
      * @return $this
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::setSoapXmlOptions()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setSoapXmlOptions}
      */
     public function setSoapXmlOptions(int $soapXmlOptions): self
     {
@@ -583,7 +583,7 @@ class SoapClient
     /**
      * @param int $soapXmlOption
      * @return $this
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::addSoapXmlOption()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::addSoapXmlOption}
      */
     public function addSoapXmlOption(int $soapXmlOption): self
     {
@@ -594,7 +594,7 @@ class SoapClient
     /**
      * @param int $soapXmlOption
      * @return $this
-     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::removeSoapXmlOption()}
+     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::removeSoapXmlOption}
      */
     public function removeSoapXmlOption(int $soapXmlOption): self
     {
