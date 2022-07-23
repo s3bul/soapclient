@@ -18,7 +18,7 @@ class SoapResponse
     private $data;
 
     /**
-     * @var string|SoapXmlElement|null
+     * @var mixed
      */
     private $xml;
 
@@ -41,7 +41,7 @@ class SoapResponse
     }
 
     /**
-     * @return string|SoapXmlElement|null
+     * @return mixed
      */
     public function getXml()
     {
@@ -49,7 +49,7 @@ class SoapResponse
     }
 
     /**
-     * @param string|SoapXmlElement|null $xml
+     * @param mixed $xml
      * @return $this
      */
     public function setXml($xml): self

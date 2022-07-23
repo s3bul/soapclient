@@ -199,7 +199,7 @@ class SoapClient
     }
 
     /**
-     * @return string|SoapXmlElement|null
+     * @return mixed
      */
     public function getLastResponse()
     {
