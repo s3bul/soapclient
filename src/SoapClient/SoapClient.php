@@ -6,6 +6,7 @@ namespace S3bul\SoapClient;
 
 use InvalidArgumentException;
 use S3bul\SoapClient\Formatter\FormatterInterface;
+use S3bul\SoapClient\Formatter\SoapXmlElementFormatter;
 use SoapClient as PhpSoapClient;
 use SoapHeader;
 
@@ -51,7 +52,6 @@ class SoapClient
     const DEFAULT_TRACE = false;
     const DEFAULT_SIMPLE_RESPONSE = true;
     const DEFAULT_SOAP_XML_ELEMENT = true;
-    const DEFAULT_SOAP_XML_OPTIONS = 0;
 
     /**
      * @var PhpSoapClient|null
@@ -110,19 +110,19 @@ class SoapClient
     private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
 
     /**
-     * @var string|null
+     * @var SoapXmlElementFormatter
      */
-    private ?string $responseName = null;
-
-    /**
-     * @var int
-     */
-    private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+    private SoapXmlElementFormatter $soapXmlElementFormatter;
 
     /**
      * @var FormatterInterface|null
      */
     private ?FormatterInterface $formatter = null;
+
+    public function __construct()
+    {
+        $this->soapXmlElementFormatter = new SoapXmlElementFormatter();
+    }
 
     /**
      * @param string|null $wsdl
@@ -152,8 +152,7 @@ class SoapClient
         $this->lastCallResponse = null;
         $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
-        $this->responseName = null;
-        $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+        $this->soapXmlElementFormatter->reset();
         $this->formatter = null;
 
         return $this;
@@ -200,31 +199,6 @@ class SoapClient
     }
 
     /**
-     * @param SoapXmlElement $element
-     * @return SoapXmlElement
-     */
-    private function normalizeSoapXmlElement(SoapXmlElement $element): SoapXmlElement
-    {
-        $ucResponseName = ucfirst($this->responseName ?? '');
-        $lcResponseName = lcfirst($this->responseName ?? '');
-
-        return $this->responseName !== null ?
-            ($element->{$this->responseName} ?? $element->{$ucResponseName} ?? $element->{$lcResponseName} ?? $element) :
-            $element;
-    }
-
-    /**
-     * @param string $content
-     * @return SoapXmlElement
-     */
-    private function createSoapXmlElement(string $content): SoapXmlElement
-    {
-        $data = is_null($this->formatter) ? $content : $this->formatter->format($content);
-        $result = new SoapXmlElement($data, $this->soapXmlOptions);
-        return $this->normalizeSoapXmlElement($result);
-    }
-
-    /**
      * @return string|SoapXmlElement|null
      */
     public function getLastResponse()
@@ -232,8 +206,14 @@ class SoapClient
         $this->checkClient();
         $this->checkTrace();
         $response = $this->client->__getLastResponse();
-        return $this->soapXmlElement && is_string($response) ?
-            $this->createSoapXmlElement($response) : $response;
+
+        if(is_null($response)) {
+            return null;
+        }
+
+        return is_null($this->formatter) ?
+            ($this->soapXmlElement ? $this->soapXmlElementFormatter->format($response) : $response) :
+            $this->formatter->format($response);
     }
 
     /**
@@ -565,7 +545,7 @@ class SoapClient
      */
     public function getResponseName(): ?string
     {
-        return $this->responseName;
+        return $this->soapXmlElementFormatter->getResponseName();
     }
 
     /**
@@ -574,7 +554,7 @@ class SoapClient
      */
     public function setResponseName(?string $responseName): self
     {
-        $this->responseName = $responseName;
+        $this->soapXmlElementFormatter->setResponseName($responseName);
         return $this;
     }
 
@@ -583,7 +563,7 @@ class SoapClient
      */
     public function getSoapXmlOptions(): int
     {
-        return $this->soapXmlOptions;
+        return $this->soapXmlElementFormatter->getSoapXmlOptions();
     }
 
     /**
@@ -592,7 +572,7 @@ class SoapClient
      */
     public function setSoapXmlOptions(int $soapXmlOptions): self
     {
-        $this->soapXmlOptions = $soapXmlOptions;
+        $this->soapXmlElementFormatter->setSoapXmlOptions($soapXmlOptions);
         return $this;
     }
 
@@ -602,7 +582,7 @@ class SoapClient
      */
     public function addSoapXmlOption(int $soapXmlOption): self
     {
-        $this->soapXmlOptions |= $soapXmlOption;
+        $this->soapXmlElementFormatter->addSoapXmlOption($soapXmlOption);
         return $this;
     }
 
@@ -612,7 +592,33 @@ class SoapClient
      */
     public function removeSoapXmlOption(int $soapXmlOption): self
     {
-        $this->soapXmlOptions ^= $soapXmlOption;
+        $this->soapXmlElementFormatter->removeSoapXmlOption($soapXmlOption);
+        return $this;
+    }
+
+    /**
+     * @return SoapXmlElementFormatter
+     */
+    public function getSoapXmlElementFormatter(): SoapXmlElementFormatter
+    {
+        return $this->soapXmlElementFormatter;
+    }
+
+    /**
+     * @return FormatterInterface|null
+     */
+    public function getFormatter(): ?FormatterInterface
+    {
+        return $this->formatter;
+    }
+
+    /**
+     * @param FormatterInterface|null $formatter
+     * @return $this
+     */
+    public function setFormatter(?FormatterInterface $formatter): self
+    {
+        $this->formatter = $formatter;
         return $this;
     }
 
