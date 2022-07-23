@@ -235,7 +235,7 @@ class SoapClient
 
         return (new SoapResponse())
             ->setData($this->getLastCallResponse())
-            ->setXml($this->getLastResponse());
+            ->setResponse($this->getLastResponse());
     }
 
     /**
