@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace S3bul\SoapClient;
 
 use InvalidArgumentException;
+use S3bul\SoapClient\Formatter\FormatterInterface;
 use SoapClient as PhpSoapClient;
 use SoapHeader;
 
@@ -119,6 +120,11 @@ class SoapClient
     private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
 
     /**
+     * @var FormatterInterface|null
+     */
+    private ?FormatterInterface $formatter = null;
+
+    /**
      * @param string|null $wsdl
      * @param array $options
      * @return $this
@@ -148,6 +154,7 @@ class SoapClient
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->responseName = null;
         $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+        $this->formatter = null;
 
         return $this;
     }
@@ -212,7 +219,8 @@ class SoapClient
      */
     private function createSoapXmlElement(string $content): SoapXmlElement
     {
-        $result = new SoapXmlElement($content, $this->soapXmlOptions);
+        $data = is_null($this->formatter) ? $content : $this->formatter->format($content);
+        $result = new SoapXmlElement($data, $this->soapXmlOptions);
         return $this->normalizeSoapXmlElement($result);
     }
 
