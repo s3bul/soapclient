@@ -110,14 +110,14 @@ class SoapClient
     private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
 
     /**
-     * @var SoapXmlElementFormatter
-     */
-    private SoapXmlElementFormatter $soapXmlElementFormatter;
-
-    /**
      * @var FormatterInterface|null
      */
     private ?FormatterInterface $formatter = null;
+
+    /**
+     * @var SoapXmlElementFormatter
+     */
+    protected SoapXmlElementFormatter $soapXmlElementFormatter;
 
     public function __construct()
     {
@@ -542,6 +542,7 @@ class SoapClient
 
     /**
      * @return string|null
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::getResponseName()}
      */
     public function getResponseName(): ?string
     {
@@ -551,6 +552,7 @@ class SoapClient
     /**
      * @param string|null $responseName
      * @return $this
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::setResponseName()}
      */
     public function setResponseName(?string $responseName): self
     {
@@ -560,6 +562,7 @@ class SoapClient
 
     /**
      * @return int
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::getSoapXmlOptions()}
      */
     public function getSoapXmlOptions(): int
     {
@@ -569,6 +572,7 @@ class SoapClient
     /**
      * @param int $soapXmlOptions
      * @return $this
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::setSoapXmlOptions()}
      */
     public function setSoapXmlOptions(int $soapXmlOptions): self
     {
@@ -579,6 +583,7 @@ class SoapClient
     /**
      * @param int $soapXmlOption
      * @return $this
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::addSoapXmlOption()}
      */
     public function addSoapXmlOption(int $soapXmlOption): self
     {
@@ -589,19 +594,12 @@ class SoapClient
     /**
      * @param int $soapXmlOption
      * @return $this
+     * @deprecated Use {@see getSoapXmlElementFormatter} {@see SoapXmlElementFormatter::removeSoapXmlOption()}
      */
     public function removeSoapXmlOption(int $soapXmlOption): self
     {
         $this->soapXmlElementFormatter->removeSoapXmlOption($soapXmlOption);
         return $this;
-    }
-
-    /**
-     * @return SoapXmlElementFormatter
-     */
-    public function getSoapXmlElementFormatter(): SoapXmlElementFormatter
-    {
-        return $this->soapXmlElementFormatter;
     }
 
     /**
