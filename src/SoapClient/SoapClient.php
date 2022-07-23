@@ -339,7 +339,7 @@ class SoapClient
      */
     public function getTrace(): ?bool
     {
-        return $this->trace;
+        return $this->isTrace();
     }
 
     /**
