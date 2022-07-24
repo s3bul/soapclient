@@ -17,11 +17,6 @@ class SoapXmlElementFormatter implements FormatterInterface
     const DEFAULT_SOAP_XML_OPTIONS = 0;
 
     /**
-     * @var string|null
-     */
-    private ?string $responseName = null;
-
-    /**
      * @var int
      */
     private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
@@ -31,27 +26,8 @@ class SoapXmlElementFormatter implements FormatterInterface
      */
     public function reset(): self
     {
-        $this->responseName = null;
         $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
 
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getResponseName(): ?string
-    {
-        return $this->responseName;
-    }
-
-    /**
-     * @param string|null $responseName
-     * @return $this
-     */
-    public function setResponseName(?string $responseName): self
-    {
-        $this->responseName = $responseName;
         return $this;
     }
 
@@ -94,27 +70,12 @@ class SoapXmlElementFormatter implements FormatterInterface
     }
 
     /**
-     * @param SoapXmlElement $element
-     * @return SoapXmlElement
-     */
-    private function normalizeSoapXmlElement(SoapXmlElement $element): SoapXmlElement
-    {
-        $ucResponseName = ucfirst($this->responseName ?? '');
-        $lcResponseName = lcfirst($this->responseName ?? '');
-
-        return $this->responseName !== null ?
-            ($element->{$this->responseName} ?? $element->{$ucResponseName} ?? $element->{$lcResponseName} ?? $element) :
-            $element;
-    }
-
-    /**
      * @param string $data
      * @return SoapXmlElement
      */
     public function format(string $data): SoapXmlElement
     {
-        $result = new SoapXmlElement($data, $this->soapXmlOptions);
-        return $this->normalizeSoapXmlElement($result);
+        return new SoapXmlElement($data, $this->soapXmlOptions);
     }
 
 }
