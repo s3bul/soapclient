@@ -101,7 +101,7 @@ class SoapClient
 
     /**
      * @param string|null $wsdl
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return $this
      */
     public function init(string $wsdl = null, array $options = []): self
