@@ -14,9 +14,9 @@ use Exception;
  */
 class SoapException extends Exception
 {
-    const INIT_EXCEPTION = 100;
-    const TRACE_EXCEPTION = 200;
-    const METHOD_EXCEPTION = 300;
-    const OPTION_EXCEPTION = 400;
+    const INIT_CODE = 100;
+    const TRACE_CODE = 200;
+    const METHOD_CODE = 300;
+    const OPTION_CODE = 400;
 
 }

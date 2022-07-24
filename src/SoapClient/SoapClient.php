@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace S3bul\SoapClient;
 
 use S3bul\SoapClient\Formatter\FormatterInterface;
-use S3bul\SoapClient\Formatter\SoapXmlElementFormatter;
 use SoapClient as PhpSoapClient;
 use SoapHeader;
 
@@ -135,7 +134,7 @@ class SoapClient
     private function checkClient(): void
     {
         if(is_null($this->client)) {
-            throw new SoapException('SoapClient: First call "init" method', SoapException::INIT_EXCEPTION);
+            throw new SoapException('SoapClient: First call "init" method', SoapException::INIT_CODE);
         }
     }
 
@@ -145,7 +144,7 @@ class SoapClient
     private function checkTrace(): void
     {
         if($this->trace !== true) {
-            throw new SoapException('SoapClient: First set "trace" to true', SoapException::TRACE_EXCEPTION);
+            throw new SoapException('SoapClient: First set "trace" to true', SoapException::TRACE_CODE);
         }
     }
 
@@ -223,7 +222,7 @@ class SoapClient
             (substr($name, 0, 2) === '__' || !$isCallMethod) &&
             !method_exists($this->client, $name)
         ) {
-            throw new SoapException("SoapClient: Method \"$name\" doesn't exists", SoapException::METHOD_EXCEPTION);
+            throw new SoapException("SoapClient: Method \"$name\" doesn't exists", SoapException::METHOD_CODE);
         }
 
         if(substr($name, 0, 9) === '__getLast') {
@@ -437,7 +436,7 @@ class SoapClient
     public function setOption(string $option, $value): self
     {
         if(in_array($option, self::RESTRICT_OPTIONS)) {
-            throw new SoapException("SoapClient: Option \"$option\" is restricted", SoapException::OPTION_EXCEPTION);
+            throw new SoapException("SoapClient: Option \"$option\" is restricted", SoapException::OPTION_CODE);
         }
         $this->options[$option] = $value;
 
