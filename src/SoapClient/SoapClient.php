@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace S3bul\SoapClient;
 
-use InvalidArgumentException;
 use S3bul\SoapClient\Formatter\FormatterInterface;
 use S3bul\SoapClient\Formatter\SoapXmlElementFormatter;
 use SoapClient as PhpSoapClient;
@@ -149,22 +148,22 @@ class SoapClient
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws SoapException
      */
     private function checkClient(): void
     {
         if(is_null($this->client)) {
-            throw new InvalidArgumentException('SoapClient: First call "init" method');
+            throw new SoapException('SoapClient: First call "init" method', SoapException::INIT_EXCEPTION);
         }
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws SoapException
      */
     private function checkTrace(): void
     {
         if($this->trace !== true) {
-            throw new InvalidArgumentException('SoapClient: First set "trace" to true');
+            throw new SoapException('SoapClient: First set "trace" to true', SoapException::TRACE_EXCEPTION);
         }
     }
 
@@ -232,6 +231,7 @@ class SoapClient
      * @param string $name
      * @param mixed[] $arguments
      * @return mixed
+     * @throws SoapException
      */
     public function __call(string $name, array $arguments)
     {
@@ -243,7 +243,7 @@ class SoapClient
             (substr($name, 0, 2) === '__' || !$isCallMethod) &&
             !method_exists($this->client, $name)
         ) {
-            throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
+            throw new SoapException("SoapClient: Method \"$name\" doesn't exists", SoapException::METHOD_EXCEPTION);
         }
 
         if(substr($name, 0, 9) === '__getLast') {
@@ -470,11 +470,12 @@ class SoapClient
      * @param string $option
      * @param mixed $value
      * @return $this
+     * @throws SoapException
      */
     public function setOption(string $option, $value): self
     {
         if(in_array($option, self::RESTRICT_OPTIONS)) {
-            throw new InvalidArgumentException("SoapClient: Option \"$option\" is restricted");
+            throw new SoapException("SoapClient: Option \"$option\" is restricted", SoapException::OPTION_EXCEPTION);
         }
         $this->options[$option] = $value;
 
