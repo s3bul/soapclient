@@ -42,25 +42,6 @@ class SoapResponse
 
     /**
      * @return mixed
-     * @deprecated Use {@see getResponse}
-     */
-    public function getXml()
-    {
-        return $this->getResponse();
-    }
-
-    /**
-     * @param mixed $xml
-     * @return $this
-     * @deprecated Use {@see setResponse}
-     */
-    public function setXml($xml): self
-    {
-        return $this->setResponse($xml);
-    }
-
-    /**
-     * @return mixed
      */
     public function getResponse()
     {

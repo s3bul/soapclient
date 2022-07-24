@@ -100,12 +100,6 @@ class SoapClient
 
     /**
      * @var bool
-     * @deprecated
-     */
-    private bool $simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
-
-    /**
-     * @var bool
      */
     private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
 
@@ -335,15 +329,6 @@ class SoapClient
 
     /**
      * @return bool|null
-     * @deprecated Use {@see SoapClient::isTrace}
-     */
-    public function getTrace(): ?bool
-    {
-        return $this->isTrace();
-    }
-
-    /**
-     * @return bool|null
      */
     public function isTrace(): ?bool
     {
@@ -417,46 +402,6 @@ class SoapClient
     public function addOneClassmap(string $key, string $name): self
     {
         $this->classmap[$key] = $name;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     * @deprecated
-     */
-    public function isSimpleResponse(): bool
-    {
-        return $this->simpleResponse;
-    }
-
-    /**
-     * @param bool $simpleResponse
-     * @return $this
-     * @deprecated
-     */
-    public function setSimpleResponse(bool $simpleResponse): self
-    {
-        $this->simpleResponse = $simpleResponse;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     * @deprecated Use {@see SoapClient::isSoapXmlElement}
-     */
-    public function isSimpleXmlElement(): bool
-    {
-        return $this->soapXmlElement;
-    }
-
-    /**
-     * @param bool $simpleXmlElement
-     * @return $this
-     * @deprecated Use {@see SoapClient::setSoapXmlElement}
-     */
-    public function setSimpleXmlElement(bool $simpleXmlElement): self
-    {
-        $this->soapXmlElement = $simpleXmlElement;
         return $this;
     }
 
@@ -537,68 +482,6 @@ class SoapClient
         }
         $this->options[$option] = $value;
 
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getResponseName}
-     */
-    public function getResponseName(): ?string
-    {
-        return $this->soapXmlElementFormatter->getResponseName();
-    }
-
-    /**
-     * @param string|null $responseName
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setResponseName}
-     */
-    public function setResponseName(?string $responseName): self
-    {
-        $this->soapXmlElementFormatter->setResponseName($responseName);
-        return $this;
-    }
-
-    /**
-     * @return int
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getSoapXmlOptions}
-     */
-    public function getSoapXmlOptions(): int
-    {
-        return $this->soapXmlElementFormatter->getSoapXmlOptions();
-    }
-
-    /**
-     * @param int $soapXmlOptions
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setSoapXmlOptions}
-     */
-    public function setSoapXmlOptions(int $soapXmlOptions): self
-    {
-        $this->soapXmlElementFormatter->setSoapXmlOptions($soapXmlOptions);
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::addSoapXmlOption}
-     */
-    public function addSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlElementFormatter->addSoapXmlOption($soapXmlOption);
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::removeSoapXmlOption}
-     */
-    public function removeSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlElementFormatter->removeSoapXmlOption($soapXmlOption);
         return $this;
     }
 
