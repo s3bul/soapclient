@@ -14,19 +14,19 @@ use S3bul\SoapClient\SoapXmlElement;
  */
 class SoapXmlElementFormatter implements FormatterInterface
 {
-    const DEFAULT_SOAP_XML_OPTIONS = 0;
+    const DEFAULT_OPTIONS = 0;
 
     /**
      * @var int
      */
-    private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+    private int $options = self::DEFAULT_OPTIONS;
 
     /**
      * @return $this
      */
     public function reset(): self
     {
-        $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+        $this->options = self::DEFAULT_OPTIONS;
 
         return $this;
     }
@@ -34,38 +34,38 @@ class SoapXmlElementFormatter implements FormatterInterface
     /**
      * @return int
      */
-    public function getSoapXmlOptions(): int
+    public function getOptions(): int
     {
-        return $this->soapXmlOptions;
+        return $this->options;
     }
 
     /**
-     * @param int $soapXmlOptions
+     * @param int $options
      * @return $this
      */
-    public function setSoapXmlOptions(int $soapXmlOptions): self
+    public function setOptions(int $options): self
     {
-        $this->soapXmlOptions = $soapXmlOptions;
+        $this->options = $options;
         return $this;
     }
 
     /**
-     * @param int $soapXmlOption
+     * @param int $option
      * @return $this
      */
-    public function addSoapXmlOption(int $soapXmlOption): self
+    public function addOption(int $option): self
     {
-        $this->soapXmlOptions |= $soapXmlOption;
+        $this->options |= $option;
         return $this;
     }
 
     /**
-     * @param int $soapXmlOption
+     * @param int $option
      * @return $this
      */
-    public function removeSoapXmlOption(int $soapXmlOption): self
+    public function removeOption(int $option): self
     {
-        $this->soapXmlOptions ^= $soapXmlOption;
+        $this->options ^= $option;
         return $this;
     }
 
@@ -75,7 +75,7 @@ class SoapXmlElementFormatter implements FormatterInterface
      */
     public function format(string $data): SoapXmlElement
     {
-        return new SoapXmlElement($data, $this->soapXmlOptions);
+        return new SoapXmlElement($data, $this->options);
     }
 
 }
