@@ -130,9 +130,9 @@ class SoapClient
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    public function reset(): self
+    public function reset(): void
     {
         $this->client = null;
         $this->wsdl = null;
@@ -146,8 +146,6 @@ class SoapClient
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->soapXmlElementFormatter->reset();
         $this->formatter = null;
-
-        return $this;
     }
 
     /**
@@ -181,7 +179,7 @@ class SoapClient
         $services = array_unique($this->client->__getFunctions());
         foreach($services as $service) {
             $matches = [];
-            $match = preg_match('/(\w+)[ ]+(\w+)/', $service, $matches);
+            $match = preg_match('/(\w+) +(\w+)/', $service, $matches);
             if($match === 1) {
                 $result[$matches[2]] = $matches[1];
             }
