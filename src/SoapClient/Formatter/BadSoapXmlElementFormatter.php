@@ -7,12 +7,12 @@ namespace S3bul\SoapClient\Formatter;
 use S3bul\SoapClient\SoapXmlElement;
 
 /**
- * Class BadSoapResponseFormatter
+ * Class BadSoapXmlElementFormatter
  *
  * @author Sebastian Korzeniecki <sebastian.korzeniecki@sprint.pl>
  * @package S3bul\SoapClient\Formatter
  */
-class BadSoapResponseFormatter implements FormatterInterface
+class BadSoapXmlElementFormatter implements FormatterInterface
 {
     /**
      * @var SoapXmlElementFormatter

@@ -50,7 +50,6 @@ class SoapClient
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
     const DEFAULT_TRACE = false;
-    const DEFAULT_SIMPLE_RESPONSE = true;
     const DEFAULT_SOAP_XML_ELEMENT = true;
 
     /**
@@ -144,7 +143,6 @@ class SoapClient
         $this->streamContext = null;
         $this->classmap = [];
         $this->lastCallResponse = null;
-        $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
         $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
         $this->soapXmlElementFormatter->reset();
         $this->formatter = null;
