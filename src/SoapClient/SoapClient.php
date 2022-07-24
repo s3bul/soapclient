@@ -49,7 +49,6 @@ class SoapClient
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
     const DEFAULT_TRACE = false;
-    const DEFAULT_SOAP_XML_ELEMENT = true;
 
     /**
      * @var PhpSoapClient|null
@@ -97,24 +96,9 @@ class SoapClient
     private $lastCallResponse = null;
 
     /**
-     * @var bool
-     */
-    private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
-
-    /**
      * @var FormatterInterface|null
      */
     private ?FormatterInterface $formatter = null;
-
-    /**
-     * @var SoapXmlElementFormatter
-     */
-    protected SoapXmlElementFormatter $soapXmlElementFormatter;
-
-    public function __construct()
-    {
-        $this->soapXmlElementFormatter = new SoapXmlElementFormatter();
-    }
 
     /**
      * @param string|null $wsdl
@@ -142,8 +126,6 @@ class SoapClient
         $this->streamContext = null;
         $this->classmap = [];
         $this->lastCallResponse = null;
-        $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
-        $this->soapXmlElementFormatter->reset();
         $this->formatter = null;
     }
 
@@ -200,9 +182,7 @@ class SoapClient
             return null;
         }
 
-        return is_null($this->formatter) ?
-            ($this->soapXmlElement ? $this->soapXmlElementFormatter->format($response) : $response) :
-            $this->formatter->format($response);
+        return is_null($this->formatter) ? $response : $this->formatter->format($response);
     }
 
     /**
@@ -398,24 +378,6 @@ class SoapClient
     public function addOneClassmap(string $key, string $name): self
     {
         $this->classmap[$key] = $name;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSoapXmlElement(): bool
-    {
-        return $this->soapXmlElement;
-    }
-
-    /**
-     * @param bool $soapXmlElement
-     * @return $this
-     */
-    public function setSoapXmlElement(bool $soapXmlElement): self
-    {
-        $this->soapXmlElement = $soapXmlElement;
         return $this;
     }
 

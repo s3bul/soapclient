@@ -74,17 +74,6 @@ class SoapXmlElementFormatter implements FormatterInterface
     }
 
     /**
-     * @return void
-     */
-    public function reset(): void
-    {
-        $this->options = self::DEFAULT_OPTIONS;
-        $this->dataIsURL = self::DEFAULT_DATA_IS_URL;
-        $this->namespaceOrPrefix = self::DEFAULT_NAMESPACE_OR_PREFIX;
-        $this->isPrefix = self::DEFAULT_IS_PREFIX;
-    }
-
-    /**
      * @return int
      */
     public function getOptions(): int
