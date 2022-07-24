@@ -18,9 +18,9 @@ class SoapResponse
     private $data;
 
     /**
-     * @var string|SoapXmlElement|null
+     * @var mixed
      */
-    private $xml;
+    private $response;
 
     /**
      * @return mixed
@@ -41,20 +41,39 @@ class SoapResponse
     }
 
     /**
-     * @return string|SoapXmlElement|null
+     * @return mixed
+     * @deprecated Use {@see getResponse}
      */
     public function getXml()
     {
-        return $this->xml;
+        return $this->getResponse();
     }
 
     /**
-     * @param string|SoapXmlElement|null $xml
+     * @param mixed $xml
      * @return $this
+     * @deprecated Use {@see setResponse}
      */
     public function setXml($xml): self
     {
-        $this->xml = $xml;
+        return $this->setResponse($xml);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param mixed $response
+     * @return $this
+     */
+    public function setResponse($response): self
+    {
+        $this->response = $response;
         return $this;
     }
 
