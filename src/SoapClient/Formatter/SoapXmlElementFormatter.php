@@ -15,20 +15,73 @@ use S3bul\SoapClient\SoapXmlElement;
 class SoapXmlElementFormatter implements FormatterInterface
 {
     const DEFAULT_OPTIONS = 0;
+    const DEFAULT_DATA_IS_URL = false;
+    const DEFAULT_NAMESPACE_OR_PREFIX = '';
+    const DEFAULT_IS_PREFIX = false;
 
     /**
      * @var int
      */
-    private int $options = self::DEFAULT_OPTIONS;
+    private int $options;
 
     /**
-     * @return $this
+     * @var bool
      */
-    public function reset(): self
+    private bool $dataIsURL;
+
+    /**
+     * @var string
+     */
+    private string $namespaceOrPrefix;
+
+    /**
+     * @var bool
+     */
+    private bool $isPrefix;
+
+    /**
+     * @param int|null $options
+     * @param bool|null $dataIsURL
+     * @param string|null $namespaceOrPrefix
+     * @param bool|null $isPrefix
+     */
+    public function __construct(
+        int    $options = null,
+        bool   $dataIsURL = null,
+        string $namespaceOrPrefix = null,
+        bool   $isPrefix = null
+    )
+    {
+        $this->options = $options ?? self::DEFAULT_OPTIONS;
+        $this->dataIsURL = $dataIsURL ?? self::DEFAULT_DATA_IS_URL;
+        $this->namespaceOrPrefix = $namespaceOrPrefix ?? self::DEFAULT_NAMESPACE_OR_PREFIX;
+        $this->isPrefix = $isPrefix ?? self::DEFAULT_IS_PREFIX;
+    }
+
+    /**
+     * @param string $data
+     * @return SoapXmlElement
+     */
+    public function format(string $data): SoapXmlElement
+    {
+        return new SoapXmlElement(
+            $data,
+            $this->options,
+            $this->dataIsURL,
+            $this->namespaceOrPrefix,
+            $this->isPrefix,
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function reset(): void
     {
         $this->options = self::DEFAULT_OPTIONS;
-
-        return $this;
+        $this->dataIsURL = self::DEFAULT_DATA_IS_URL;
+        $this->namespaceOrPrefix = self::DEFAULT_NAMESPACE_OR_PREFIX;
+        $this->isPrefix = self::DEFAULT_IS_PREFIX;
     }
 
     /**
@@ -70,12 +123,57 @@ class SoapXmlElementFormatter implements FormatterInterface
     }
 
     /**
-     * @param string $data
-     * @return SoapXmlElement
+     * @return bool
      */
-    public function format(string $data): SoapXmlElement
+    public function isDataIsURL(): bool
     {
-        return new SoapXmlElement($data, $this->options);
+        return $this->dataIsURL;
+    }
+
+    /**
+     * @param bool $dataIsURL
+     * @return $this
+     */
+    public function setDataIsURL(bool $dataIsURL): self
+    {
+        $this->dataIsURL = $dataIsURL;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespaceOrPrefix(): string
+    {
+        return $this->namespaceOrPrefix;
+    }
+
+    /**
+     * @param string $namespaceOrPrefix
+     * @return $this
+     */
+    public function setNamespaceOrPrefix(string $namespaceOrPrefix): self
+    {
+        $this->namespaceOrPrefix = $namespaceOrPrefix;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrefix(): bool
+    {
+        return $this->isPrefix;
+    }
+
+    /**
+     * @param bool $isPrefix
+     * @return $this
+     */
+    public function setIsPrefix(bool $isPrefix): self
+    {
+        $this->isPrefix = $isPrefix;
+        return $this;
     }
 
 }
