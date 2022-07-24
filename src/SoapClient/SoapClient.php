@@ -64,7 +64,7 @@ class SoapClient
     private ?string $wsdl = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $options = [];
 
@@ -89,7 +89,7 @@ class SoapClient
     private $streamContext = null;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private array $classmap = [];
 
@@ -179,7 +179,7 @@ class SoapClient
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public function getSoapServices(): array
     {
@@ -240,7 +240,7 @@ class SoapClient
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param mixed[] $arguments
      * @return mixed
      */
     public function __call(string $name, array $arguments)
@@ -335,7 +335,7 @@ class SoapClient
 
     /**
      * @return bool|null
-     * @deprecated Use {@see SoapClient::isTrace()}
+     * @deprecated Use {@see SoapClient::isTrace}
      */
     public function getTrace(): ?bool
     {
@@ -379,7 +379,7 @@ class SoapClient
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public function getClassmap(): array
     {
@@ -387,7 +387,7 @@ class SoapClient
     }
 
     /**
-     * @param array $classmap
+     * @param array<string, string> $classmap
      * @return $this
      */
     public function setClassmap(array $classmap): self
@@ -397,7 +397,7 @@ class SoapClient
     }
 
     /**
-     * @param array $classmap
+     * @param array<string, string> $classmap
      * @return $this
      */
     public function addClassmap(array $classmap): self
@@ -442,7 +442,7 @@ class SoapClient
 
     /**
      * @return bool
-     * @deprecated Use {@see SoapClient::isSoapXmlElement()}
+     * @deprecated Use {@see SoapClient::isSoapXmlElement}
      */
     public function isSimpleXmlElement(): bool
     {
@@ -452,7 +452,7 @@ class SoapClient
     /**
      * @param bool $simpleXmlElement
      * @return $this
-     * @deprecated Use {@see SoapClient::setSoapXmlElement()}
+     * @deprecated Use {@see SoapClient::setSoapXmlElement}
      */
     public function setSimpleXmlElement(bool $simpleXmlElement): self
     {
@@ -479,7 +479,7 @@ class SoapClient
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOptions(): array
     {
@@ -503,7 +503,7 @@ class SoapClient
     }
 
     /**
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return $this
      */
     public function setOptions(array $options): self
@@ -513,7 +513,7 @@ class SoapClient
     }
 
     /**
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return $this
      */
     public function addOptions(array $options): self
