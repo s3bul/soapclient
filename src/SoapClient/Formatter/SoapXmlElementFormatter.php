@@ -14,97 +14,48 @@ use S3bul\SoapClient\SoapXmlElement;
  */
 class SoapXmlElementFormatter implements FormatterInterface
 {
-    const DEFAULT_SOAP_XML_OPTIONS = 0;
-
-    /**
-     * @var string|null
-     */
-    private ?string $responseName = null;
+    const DEFAULT_OPTIONS = 0;
+    const DEFAULT_DATA_IS_URL = false;
+    const DEFAULT_NAMESPACE_OR_PREFIX = '';
+    const DEFAULT_IS_PREFIX = false;
 
     /**
      * @var int
      */
-    private int $soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
+    private int $options;
 
     /**
-     * @return $this
+     * @var bool
      */
-    public function reset(): self
-    {
-        $this->responseName = null;
-        $this->soapXmlOptions = self::DEFAULT_SOAP_XML_OPTIONS;
-
-        return $this;
-    }
+    private bool $dataIsURL;
 
     /**
-     * @return string|null
+     * @var string
      */
-    public function getResponseName(): ?string
-    {
-        return $this->responseName;
-    }
+    private string $namespaceOrPrefix;
 
     /**
-     * @param string|null $responseName
-     * @return $this
+     * @var bool
      */
-    public function setResponseName(?string $responseName): self
-    {
-        $this->responseName = $responseName;
-        return $this;
-    }
+    private bool $isPrefix;
 
     /**
-     * @return int
+     * @param int|null $options
+     * @param bool|null $dataIsURL
+     * @param string|null $namespaceOrPrefix
+     * @param bool|null $isPrefix
      */
-    public function getSoapXmlOptions(): int
+    public function __construct(
+        int    $options = null,
+        bool   $dataIsURL = null,
+        string $namespaceOrPrefix = null,
+        bool   $isPrefix = null
+    )
     {
-        return $this->soapXmlOptions;
-    }
-
-    /**
-     * @param int $soapXmlOptions
-     * @return $this
-     */
-    public function setSoapXmlOptions(int $soapXmlOptions): self
-    {
-        $this->soapXmlOptions = $soapXmlOptions;
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     */
-    public function addSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlOptions |= $soapXmlOption;
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     */
-    public function removeSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlOptions ^= $soapXmlOption;
-        return $this;
-    }
-
-    /**
-     * @param SoapXmlElement $element
-     * @return SoapXmlElement
-     */
-    private function normalizeSoapXmlElement(SoapXmlElement $element): SoapXmlElement
-    {
-        $ucResponseName = ucfirst($this->responseName ?? '');
-        $lcResponseName = lcfirst($this->responseName ?? '');
-
-        return $this->responseName !== null ?
-            ($element->{$this->responseName} ?? $element->{$ucResponseName} ?? $element->{$lcResponseName} ?? $element) :
-            $element;
+        $this->options = $options ?? self::DEFAULT_OPTIONS;
+        $this->dataIsURL = $dataIsURL ?? self::DEFAULT_DATA_IS_URL;
+        $this->namespaceOrPrefix = $namespaceOrPrefix ?? self::DEFAULT_NAMESPACE_OR_PREFIX;
+        $this->isPrefix = $isPrefix ?? self::DEFAULT_IS_PREFIX;
     }
 
     /**
@@ -113,8 +64,105 @@ class SoapXmlElementFormatter implements FormatterInterface
      */
     public function format(string $data): SoapXmlElement
     {
-        $result = new SoapXmlElement($data, $this->soapXmlOptions);
-        return $this->normalizeSoapXmlElement($result);
+        return new SoapXmlElement(
+            $data,
+            $this->options,
+            $this->dataIsURL,
+            $this->namespaceOrPrefix,
+            $this->isPrefix,
+        );
+    }
+
+    /**
+     * @return int
+     */
+    public function getOptions(): int
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param int $options
+     * @return $this
+     */
+    public function setOptions(int $options): self
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * @param int $option
+     * @return $this
+     */
+    public function addOption(int $option): self
+    {
+        $this->options |= $option;
+        return $this;
+    }
+
+    /**
+     * @param int $option
+     * @return $this
+     */
+    public function removeOption(int $option): self
+    {
+        $this->options ^= $option;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDataIsURL(): bool
+    {
+        return $this->dataIsURL;
+    }
+
+    /**
+     * @param bool $dataIsURL
+     * @return $this
+     */
+    public function setDataIsURL(bool $dataIsURL): self
+    {
+        $this->dataIsURL = $dataIsURL;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespaceOrPrefix(): string
+    {
+        return $this->namespaceOrPrefix;
+    }
+
+    /**
+     * @param string $namespaceOrPrefix
+     * @return $this
+     */
+    public function setNamespaceOrPrefix(string $namespaceOrPrefix): self
+    {
+        $this->namespaceOrPrefix = $namespaceOrPrefix;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrefix(): bool
+    {
+        return $this->isPrefix;
+    }
+
+    /**
+     * @param bool $isPrefix
+     * @return $this
+     */
+    public function setIsPrefix(bool $isPrefix): self
+    {
+        $this->isPrefix = $isPrefix;
+        return $this;
     }
 
 }

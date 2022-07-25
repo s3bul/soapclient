@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace S3bul\SoapClient;
 
-use InvalidArgumentException;
 use S3bul\SoapClient\Formatter\FormatterInterface;
-use S3bul\SoapClient\Formatter\SoapXmlElementFormatter;
 use SoapClient as PhpSoapClient;
 use SoapHeader;
 
@@ -50,8 +48,6 @@ class SoapClient
 
     const DEFAULT_SOAP_VERSION = SOAP_1_1;
     const DEFAULT_TRACE = false;
-    const DEFAULT_SIMPLE_RESPONSE = true;
-    const DEFAULT_SOAP_XML_ELEMENT = true;
 
     /**
      * @var PhpSoapClient|null
@@ -99,34 +95,13 @@ class SoapClient
     private $lastCallResponse = null;
 
     /**
-     * @var bool
-     * @deprecated
-     */
-    private bool $simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
-
-    /**
-     * @var bool
-     */
-    private bool $soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
-
-    /**
      * @var FormatterInterface|null
      */
     private ?FormatterInterface $formatter = null;
 
     /**
-     * @var SoapXmlElementFormatter
-     */
-    protected SoapXmlElementFormatter $soapXmlElementFormatter;
-
-    public function __construct()
-    {
-        $this->soapXmlElementFormatter = new SoapXmlElementFormatter();
-    }
-
-    /**
      * @param string|null $wsdl
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return $this
      */
     public function init(string $wsdl = null, array $options = []): self
@@ -137,9 +112,9 @@ class SoapClient
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    public function reset(): self
+    public function reset(): void
     {
         $this->client = null;
         $this->wsdl = null;
@@ -150,31 +125,26 @@ class SoapClient
         $this->streamContext = null;
         $this->classmap = [];
         $this->lastCallResponse = null;
-        $this->simpleResponse = self::DEFAULT_SIMPLE_RESPONSE;
-        $this->soapXmlElement = self::DEFAULT_SOAP_XML_ELEMENT;
-        $this->soapXmlElementFormatter->reset();
         $this->formatter = null;
-
-        return $this;
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws SoapException
      */
     private function checkClient(): void
     {
         if(is_null($this->client)) {
-            throw new InvalidArgumentException('SoapClient: First call "init" method');
+            throw new SoapException('SoapClient: First call "init" method', SoapException::INIT_CODE);
         }
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws SoapException
      */
     private function checkTrace(): void
     {
         if($this->trace !== true) {
-            throw new InvalidArgumentException('SoapClient: First set "trace" to true');
+            throw new SoapException('SoapClient: First set "trace" to true', SoapException::TRACE_CODE);
         }
     }
 
@@ -189,7 +159,7 @@ class SoapClient
         $services = array_unique($this->client->__getFunctions());
         foreach($services as $service) {
             $matches = [];
-            $match = preg_match('/(\w+)[ ]+(\w+)/', $service, $matches);
+            $match = preg_match('/(\w+) +(\w+)/', $service, $matches);
             if($match === 1) {
                 $result[$matches[2]] = $matches[1];
             }
@@ -211,9 +181,7 @@ class SoapClient
             return null;
         }
 
-        return is_null($this->formatter) ?
-            ($this->soapXmlElement ? $this->soapXmlElementFormatter->format($response) : $response) :
-            $this->formatter->format($response);
+        return is_null($this->formatter) ? $response : $this->formatter->format($response);
     }
 
     /**
@@ -242,6 +210,7 @@ class SoapClient
      * @param string $name
      * @param mixed[] $arguments
      * @return mixed
+     * @throws SoapException
      */
     public function __call(string $name, array $arguments)
     {
@@ -253,7 +222,7 @@ class SoapClient
             (substr($name, 0, 2) === '__' || !$isCallMethod) &&
             !method_exists($this->client, $name)
         ) {
-            throw new InvalidArgumentException("SoapClient: Method \"$name\" doesn't exists");
+            throw new SoapException("SoapClient: Method \"$name\" doesn't exists", SoapException::METHOD_CODE);
         }
 
         if(substr($name, 0, 9) === '__getLast') {
@@ -335,15 +304,6 @@ class SoapClient
 
     /**
      * @return bool|null
-     * @deprecated Use {@see SoapClient::isTrace}
-     */
-    public function getTrace(): ?bool
-    {
-        return $this->isTrace();
-    }
-
-    /**
-     * @return bool|null
      */
     public function isTrace(): ?bool
     {
@@ -421,64 +381,6 @@ class SoapClient
     }
 
     /**
-     * @return bool
-     * @deprecated
-     */
-    public function isSimpleResponse(): bool
-    {
-        return $this->simpleResponse;
-    }
-
-    /**
-     * @param bool $simpleResponse
-     * @return $this
-     * @deprecated
-     */
-    public function setSimpleResponse(bool $simpleResponse): self
-    {
-        $this->simpleResponse = $simpleResponse;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     * @deprecated Use {@see SoapClient::isSoapXmlElement}
-     */
-    public function isSimpleXmlElement(): bool
-    {
-        return $this->soapXmlElement;
-    }
-
-    /**
-     * @param bool $simpleXmlElement
-     * @return $this
-     * @deprecated Use {@see SoapClient::setSoapXmlElement}
-     */
-    public function setSimpleXmlElement(bool $simpleXmlElement): self
-    {
-        $this->soapXmlElement = $simpleXmlElement;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSoapXmlElement(): bool
-    {
-        return $this->soapXmlElement;
-    }
-
-    /**
-     * @param bool $soapXmlElement
-     * @return $this
-     */
-    public function setSoapXmlElement(bool $soapXmlElement): self
-    {
-        $this->soapXmlElement = $soapXmlElement;
-        return $this;
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public function getOptions(): array
@@ -529,76 +431,15 @@ class SoapClient
      * @param string $option
      * @param mixed $value
      * @return $this
+     * @throws SoapException
      */
     public function setOption(string $option, $value): self
     {
         if(in_array($option, self::RESTRICT_OPTIONS)) {
-            throw new InvalidArgumentException("SoapClient: Option \"$option\" is restricted");
+            throw new SoapException("SoapClient: Option \"$option\" is restricted", SoapException::OPTION_CODE);
         }
         $this->options[$option] = $value;
 
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getResponseName}
-     */
-    public function getResponseName(): ?string
-    {
-        return $this->soapXmlElementFormatter->getResponseName();
-    }
-
-    /**
-     * @param string|null $responseName
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setResponseName}
-     */
-    public function setResponseName(?string $responseName): self
-    {
-        $this->soapXmlElementFormatter->setResponseName($responseName);
-        return $this;
-    }
-
-    /**
-     * @return int
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::getSoapXmlOptions}
-     */
-    public function getSoapXmlOptions(): int
-    {
-        return $this->soapXmlElementFormatter->getSoapXmlOptions();
-    }
-
-    /**
-     * @param int $soapXmlOptions
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::setSoapXmlOptions}
-     */
-    public function setSoapXmlOptions(int $soapXmlOptions): self
-    {
-        $this->soapXmlElementFormatter->setSoapXmlOptions($soapXmlOptions);
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::addSoapXmlOption}
-     */
-    public function addSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlElementFormatter->addSoapXmlOption($soapXmlOption);
-        return $this;
-    }
-
-    /**
-     * @param int $soapXmlOption
-     * @return $this
-     * @deprecated Use {@see soapXmlElementFormatter} {@see SoapXmlElementFormatter::removeSoapXmlOption}
-     */
-    public function removeSoapXmlOption(int $soapXmlOption): self
-    {
-        $this->soapXmlElementFormatter->removeSoapXmlOption($soapXmlOption);
         return $this;
     }
 
