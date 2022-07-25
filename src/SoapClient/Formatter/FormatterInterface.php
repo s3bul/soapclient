@@ -17,6 +17,6 @@ interface FormatterInterface
      * @param mixed $data
      * @return mixed
      */
-    public function format(string $response, $data = null);
+    public function format(string $response, $data);
 
 }

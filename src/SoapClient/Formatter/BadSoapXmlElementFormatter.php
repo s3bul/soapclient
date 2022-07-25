@@ -32,7 +32,7 @@ class BadSoapXmlElementFormatter implements FormatterInterface
      * @param mixed $data
      * @return SoapXmlElement
      */
-    public function format(string $response, $data = null): SoapXmlElement
+    public function format(string $response, $data): SoapXmlElement
     {
         $result = preg_replace('/(<\/?)(\w+):([^>]*>)/', '$1$2$3', $response);
         return $this->soapXmlElementFormatter->format($result, $data);
