@@ -13,9 +13,10 @@ namespace S3bul\SoapClient\Formatter;
 interface FormatterInterface
 {
     /**
-     * @param string $data
+     * @param string $response
+     * @param mixed $data
      * @return mixed
      */
-    public function format(string $data);
+    public function format(string $response, $data = null);
 
 }

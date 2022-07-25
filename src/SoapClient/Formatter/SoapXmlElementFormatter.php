@@ -59,13 +59,14 @@ class SoapXmlElementFormatter implements FormatterInterface
     }
 
     /**
-     * @param string $data
+     * @param string $response
+     * @param mixed $data
      * @return SoapXmlElement
      */
-    public function format(string $data): SoapXmlElement
+    public function format(string $response, $data = null): SoapXmlElement
     {
         return new SoapXmlElement(
-            $data,
+            $response,
             $this->options,
             $this->dataIsURL,
             $this->namespaceOrPrefix,

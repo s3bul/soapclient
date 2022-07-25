@@ -181,7 +181,7 @@ class SoapClient
             return null;
         }
 
-        return is_null($this->formatter) ? $response : $this->formatter->format($response);
+        return is_null($this->formatter) ? $response : $this->formatter->format($response, $this->lastCallResponse);
     }
 
     /**
